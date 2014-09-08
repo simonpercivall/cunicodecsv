@@ -1,14 +1,20 @@
-unicodecsv
-==========
+cunicodecsv
+===========
 
-The unicodecsv is a drop-in replacement for Python 2's csv module which supports unicode strings without a hassle.
+cunicodecsv is a drop-in replacement for Python 2's csv module which
+supports unicode strings without a hassle.
+
+Based on unicodecsv_ but with Cython versions of UnicodeWriter and
+UnicodeReader for speed.
 
 More fully
 ----------
 
-Python 2's csv module doesn't easily deal with unicode strings, leading to the dreaded "'ascii' codec can't encode characters in position ..." exception.
+Python 2's csv module doesn't easily deal with unicode strings, leading to the
+dreaded "'ascii' codec can't encode characters in position ..." exception.
 
-You can work around it by encoding everything just before calling write (or just after read), but why not add support to the serializer?
+You can work around it by encoding everything just before calling write
+(or just after read), but why not add support to the serializer?
 
 ::
 
@@ -22,3 +28,6 @@ You can work around it by encoding everything just before calling write (or just
    >>> row = r.next()
    >>> print row[0], row[1]
    é ñ
+
+
+.. _unicodecsv: https://github.com/jdunck/python-unicodecsv
