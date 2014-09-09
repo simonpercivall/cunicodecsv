@@ -5,17 +5,17 @@ import platform
 from setuptools import setup, find_packages, Extension
 
 
-version = __import__('unicodecsv').__version__
+version = __import__('cunicodecsv').__version__
 
 if platform.python_implementation() == "CPython":
     try:
         from Cython.Build import cythonize
-        extensions = cythonize(Extension('unicodecsv._cimpl',
-                                         ['unicodecsv/_cimpl.pyx']))
+        extensions = cythonize(Extension('cunicodecsv._cimpl',
+                                         ['cunicodecsv/_cimpl.pyx']))
     except ImportError:
         print >>sys.stderr, "unable to import Cython, building C extension from C source"
-        extensions = [Extension('unicodecsv._cimpl',
-                                ['unicodecsv/_cimpl.c'])]
+        extensions = [Extension('cunicodecsv._cimpl',
+                                ['cunicodecsv/_cimpl.c'])]
 else:
     extensions = []
 

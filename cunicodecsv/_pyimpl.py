@@ -22,13 +22,13 @@ def _stringify_list(l, encoding, errors='strict'):
 
 class UnicodeWriter(object):
     """
-    >>> import unicodecsv
+    >>> import cunicodecsv
     >>> from cStringIO import StringIO
     >>> f = StringIO()
-    >>> w = unicodecsv.writer(f, encoding='utf-8')
+    >>> w = cunicodecsv.writer(f, encoding='utf-8')
     >>> w.writerow((u'é', u'ñ'))
     >>> f.seek(0)
-    >>> r = unicodecsv.reader(f, encoding='utf-8')
+    >>> r = cunicodecsv.reader(f, encoding='utf-8')
     >>> row = r.next()
     >>> row[0] == u'é'
     True

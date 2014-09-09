@@ -8,7 +8,7 @@ import sys
 import unittest2 as unittest
 from StringIO import StringIO
 import tempfile
-import unicodecsv as csv
+import cunicodecsv as csv
 
 # pypy and cpython differ under which exception is raised under some circumstances
 # e.g. whether a module is written in C or not.
