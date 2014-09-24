@@ -8,5 +8,5 @@ venv/
 build/
 dist/
 *.egg-info/
-/cunicodecsv/_cimpl.c
-/cunicodecsv/_cimpl.so
+/lib/cunicodecsv/_cimpl.c
+/lib/cunicodecsv/_cimpl.so

@@ -2,32 +2,40 @@
 import sys
 import os
 import platform
+import re
 from setuptools import setup, find_packages, Extension
 
 
-version = __import__('cunicodecsv').__version__
+def read_version():
+    with open(os.path.join('lib', 'cunicodecsv', '__init__.py')) as f:
+        m = re.search(r'''__version__\s*=\s*['"]([^'"]*)['"]''', f.read())
+        if m:
+            return m.group(1)
+        raise ValueError("couldn't find version")
+
 
 if platform.python_implementation() == "CPython":
     try:
         from Cython.Build import cythonize
         extensions = cythonize(Extension('cunicodecsv._cimpl',
-                                         ['cunicodecsv/_cimpl.pyx']))
+                                         ['lib/cunicodecsv/_cimpl.pyx']))
     except ImportError:
         print >>sys.stderr, "unable to import Cython, building C extension from C source"
         extensions = [Extension('cunicodecsv._cimpl',
-                                ['cunicodecsv/_cimpl.c'])]
+                                ['lib/cunicodecsv/_cimpl.c'])]
 else:
     extensions = []
 
 setup(
     name='cunicodecsv',
-    version=version,
+    version=read_version(),
     description="Python2's stdlib csv module is nice, but it doesn't support unicode. This module is a drop-in replacement which *does*.",
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst'), 'r').read(),
     author='Simon Percivall',
     author_email='percivall@gmail.com',
     url='https://github.com/simonpercivall/cunicodecsv',
-    packages=find_packages(),
+    packages=find_packages('lib'),
+    package_dir={'': 'lib'},
     ext_modules=extensions,
     tests_require=['unittest2 >= 0.5.1', 'Cython >= 0.20.1'],
     test_suite='runtests.get_suite',

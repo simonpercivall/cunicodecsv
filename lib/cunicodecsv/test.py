@@ -5,7 +5,10 @@
 from codecs import EncodedFile
 import os
 import sys
-import unittest2 as unittest
+if sys.version_info < (2,7):
+    import unittest2 as unittest
+else:
+    import unittest
 from StringIO import StringIO
 import tempfile
 import cunicodecsv as csv
