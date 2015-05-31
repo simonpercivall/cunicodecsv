@@ -2,6 +2,7 @@
 # cython: embedsignature=True, profile=True
 import codecs
 import csv
+import numbers
 
 from cpython cimport (
     Py_INCREF,
@@ -27,7 +28,7 @@ cdef inline _stringify(object s, const char * encoding, const char * errors):
         return ''
     if isinstance(s, unicode):
         return PyUnicode_AsEncodedString(s, encoding, errors)
-    elif isinstance(s, (int, float)):
+    elif isinstance(s, numbers.Number):
         pass  # let csv.QUOTE_NONNUMERIC do its thing.
     elif not isinstance(s, str):
         s = str(s)
@@ -122,6 +123,7 @@ cdef class UnicodeWriter(object):
 cdef class UnicodeReader(object):
     cdef object reader
     cdef object iterrows
+    cdef bint parse_numerics
     cdef public char * encoding
     cdef public char * encoding_errors
 
@@ -142,8 +144,9 @@ cdef class UnicodeReader(object):
         # normalize encoding
         codec_info = codecs.lookup(encoding)
         self.encoding = codec_info.name
-
         self.encoding_errors = errors
+
+        self.parse_numerics = self.dialect.quoting & csv.QUOTE_NONNUMERIC
 
     def __next__(self):
         cdef list row = next(self.iterrows)
@@ -151,8 +154,15 @@ cdef class UnicodeReader(object):
         for i in range(PySequence_Length(row)):
             encoded_val = <object>PyList_GET_ITEM(row, i)
 
-            decoded_val = encoded_val if isinstance(encoded_val, float)\
-                else PyUnicode_FromEncodedObject(encoded_val, self.encoding, self.encoding_errors)
+            if self.parse_numerics:
+                decoded_val = encoded_val if isinstance(encoded_val, float)\
+                    else PyUnicode_FromEncodedObject(encoded_val,
+                                                     self.encoding,
+                                                     self.encoding_errors)
+            else:
+                decoded_val = PyUnicode_FromEncodedObject(encoded_val,
+                                                          self.encoding,
+                                                          self.encoding_errors)
 
             Py_INCREF(decoded_val)
             PyList_SetItem(row, i, decoded_val)

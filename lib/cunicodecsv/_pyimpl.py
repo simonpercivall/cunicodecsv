@@ -1,13 +1,15 @@
 # encoding: utf-8
 import csv
+import numbers
+from six import text_type
 
 
 def _stringify(s, encoding, errors):
     if s is None:
         return ''
-    if isinstance(s, unicode):
+    if isinstance(s, text_type):
         return s.encode(encoding, errors)
-    elif isinstance(s, (int , float)):
+    elif isinstance(s, numbers.Number):
         pass  # let csv.QUOTE_NONNUMERIC do its thing.
     elif not isinstance(s, str):
         s = str(s)
@@ -67,15 +69,23 @@ class UnicodeReader(object):
         self.reader = csv.reader(f, dialect, **kwds)
         self.encoding = encoding
         self.encoding_errors = errors
+        self._parse_numerics = bool(
+            self.dialect.quoting & csv.QUOTE_NONNUMERIC
+        )
 
     def next(self):
         row = self.reader.next()
         encoding = self.encoding
         encoding_errors = self.encoding_errors
-        float_ = float
         unicode_ = unicode
-        return [value if isinstance(value, float_) else
-                unicode_(value, encoding, encoding_errors) for value in row]
+        if self._parse_numerics:
+            float_ = float
+            return [value if isinstance(value, float_) else
+                    unicode_(value, encoding, encoding_errors)
+                    for value in row]
+        else:
+            return [unicode_(value, encoding, encoding_errors)
+                    for value in row]
 
     def __iter__(self):
         return self
