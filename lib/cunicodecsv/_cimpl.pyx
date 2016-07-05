@@ -93,17 +93,14 @@ cdef class UnicodeWriter(object):
         else:
             self._encoding_errors = errors
 
-    def writerow(self, row):
-        self._writerow(row)
-
-    def writerows(self, rows):
-        for row in rows:
-            self._writerow(row)
-
-    cdef inline _writerow(self, row):
+    cpdef writerow(self, row):
         if not PySequence_Check(row) and not PyIter_Check(row):
             raise csv.Error("sequence expected")
         self.writer.writerow(_stringify_list_impl(row, self._encoding, self._encoding_errors))
+
+    def writerows(self, rows):
+        for row in rows:
+            self.writerow(row)
 
     @property
     def dialect(self):
