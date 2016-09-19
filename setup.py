@@ -19,7 +19,7 @@ def read_long_description():
     return open(filename, 'rb').read().decode('utf-8')
 
 
-if platform.python_implementation() == "CPython":
+if platform.python_implementation() == "CPython" and sys.version_info[0] < 3:
     try:
         from Cython.Build import cythonize
         extensions = cythonize(Extension('cunicodecsv._cimpl',
